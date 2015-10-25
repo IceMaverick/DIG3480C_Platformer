@@ -377,11 +377,25 @@ Level.prototype.playerTouched = function(type, actor) {
   // Player loses
   if (type == "lava" && this.status == null) {
     this.status = "lost";
-    this.finishDelay = 1;
+    this.finishDelay = 4;
+	//Pauses music and plays Game Over sound. Extended death delay to allow SFX to play.
+	var snd = document.getElementById('snd');
+		snd.pause();
+	var sndfx = document.getElementById('sndfx');
+		sndfx.src = "sound/player-died.mp3";
+		sndfx.play();
   } else if (type == "fireball") {
 	this.status = "lost";
-    this.finishDelay = 1;  
+    this.finishDelay = 4;
+	var snd = document.getElementById('snd');
+		snd.pause();
+	var sndfx = document.getElementById('sndfx');
+		sndfx.src = "sound/player-died.mp3";
+		sndfx.play();	
   } else if (type == "coin") {
+	var sndfx = document.getElementById('sndfx');
+		sndfx.src = "sound/coin.mp3";
+		sndfx.play();
     this.actors = this.actors.filter(function(other) {
       return other != actor;
     });
@@ -390,7 +404,13 @@ Level.prototype.playerTouched = function(type, actor) {
            return actor.type == "coin";
          })) {
       this.status = "won";
-      this.finishDelay = 1;
+      this.finishDelay = 4;
+	  //pauses music, plays victory jingle.
+	  var snd = document.getElementById('snd');
+		snd.pause();
+	  var sndfx = document.getElementById('sndfx');
+		sndfx.src = "sound/level-win.mp3";
+		sndfx.play();
     }
   }
 };
@@ -462,18 +482,103 @@ function runLevel(level, Display, andThen) {
   });
 }
 
+//Handles playing and properly resetting music whenever levels start.
+function playMusic(level) {
+		switch (level) {
+			case 0:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/mariorpg-forestmaze.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+			case 1:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/smw-castle.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+			case 2:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/smb3-castle.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+			case 3:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/smw-boss.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+			case 4:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/smg-star-reactor.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+			case 5:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/mariorpg-bowser.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+			case 6:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/game-beat.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+			default:
+				var snd = document.getElementById('snd');
+				snd.src = "sound/smw-castle.mp3";
+				snd.addEventListener('ended', function() {
+				this.currentTime = 0;
+				this.play();
+				}, false);
+				snd.play();
+				break;
+		}
+}
+
 function runGame(plans, Display) {
   function startLevel(n) {
     // Create a new level using the nth element of array plans
     // Pass in a reference to Display function, DOMDisplay (in index.html).
     runLevel(new Level(plans[n]), Display, function(status) {
-      if (status == "lost")
-        startLevel(n);
-      else if (n < plans.length - 1)
+      if (status == "lost") {
+		startLevel(n);
+		//starts level music in function above.
+		playMusic(n);
+	  }
+      else if (n < plans.length - 1) {
         startLevel(n + 1);
+		playMusic (n + 1);
+	  }
       else
         console.log("You win!");
     });
   }
-  startLevel(2);
+  //controls initial game start point. Great for debugging.
+  startLevel(0);
+  playMusic(0);
 }
