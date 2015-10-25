@@ -1,19 +1,19 @@
-.background    { background: rgb(52, 166, 251);
+.background    { background: url(../images/background.gif);
                  table-layout: fixed;
                  border-spacing: 0;   }
 .background td { padding: 0;          }
 .lava          { background: url("../images/lava.png"); }
-.wall          { background: url("../images/ground1.png");   }
+.wall          { background: url("../images/ground.gif");   }
 
 .actor  { position: absolute;  }
-.coin   { background: rgb(241, 229, 89); }
-.player { background: rgb(64, 64, 64); }
+.coin   { background: url(../images/coin.gif); }
+.player { background: rgb(80, 80, 240); }
 .fireball { background: url("../images/lava.png"); }
 
 .game {
   overflow: hidden;
-  max-width: 600px;
-  max-height: 450px;
+  max-width: 800px;
+  max-height: 600px;
   position: relative;
 }
 
