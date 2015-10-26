@@ -3,7 +3,8 @@ var actorChars = {
   "@": Player,
   "o": Coin, // A coin will wobble up and down
   "=": Lava, "|": Lava, "v": Lava,
-  "f": Fireball  
+  "f": Fireball,
+  "q": Victory  
 };
 
 function Level(plan) {
@@ -89,6 +90,15 @@ function Coin(pos) {
   this.wobble = Math.random() * Math.PI * 2;
 }
 Coin.prototype.type = "coin";
+
+//Unique coin copy just for the last level.
+function Victory(pos) {
+  this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1));
+  this.size = new Vector(0.6, 0.6);
+  // Make it go back and forth in a sine wave.
+  this.wobble = Math.random() * Math.PI * 2;
+}
+Victory.prototype.type = "victory";
 
 //added new type of obstacle: Fireball. Mimics coin and is deadly.
 function Fireball(pos) {
@@ -312,6 +322,12 @@ Fireball.prototype.act = function(step) {
   this.pos = this.basePos.plus(new Vector(0, wobblePos));
 }
 
+Victory.prototype.act = function(step) {
+  this.wobble += step * wobbleSpeed;
+  var wobblePos = Math.sin(this.wobble) * wobbleDist;
+  this.pos = this.basePos.plus(new Vector(0, wobblePos));
+};
+
 var maxStep = 0.05;
 
 var playerXSpeed = 12;
@@ -392,10 +408,18 @@ Level.prototype.playerTouched = function(type, actor) {
 	var sndfx = document.getElementById('sndfx');
 		sndfx.src = "sound/player-died.mp3";
 		sndfx.play();	
-  } else if (type == "coin") {
+  } else if (type == "victory") {
+	this.finishDelay = 8;
 	var sndfx = document.getElementById('sndfx');
-		sndfx.src = "sound/coin.mp3";
+		sndfx.src = "sound/game-beat.mp3";
 		sndfx.play();
+	this.actors = this.actors.filter(function(other) {
+      return other != actor;
+	});	
+  } else if (type == "coin") {
+	var coinfx = document.getElementById('coinfx');
+		coinfx.src = "sound/coin.mp3";
+		coinfx.play();
     this.actors = this.actors.filter(function(other) {
       return other != actor;
     });
@@ -487,7 +511,7 @@ function playMusic(level) {
 		switch (level) {
 			case 0:
 				var snd = document.getElementById('snd');
-				snd.src = "sound/mariorpg-forestmaze.mp3";
+				snd.src = "sound/smb3-hammer.mp3";
 				snd.addEventListener('ended', function() {
 				this.currentTime = 0;
 				this.play();
@@ -541,20 +565,11 @@ function playMusic(level) {
 				break;
 			case 6:
 				var snd = document.getElementById('snd');
-				snd.src = "sound/game-beat.mp3";
-				snd.addEventListener('ended', function() {
-				this.currentTime = 0;
-				this.play();
-				}, false);
-				snd.play();
+				snd.pause();
 				break;
 			default:
 				var snd = document.getElementById('snd');
 				snd.src = "sound/smw-castle.mp3";
-				snd.addEventListener('ended', function() {
-				this.currentTime = 0;
-				this.play();
-				}, false);
 				snd.play();
 				break;
 		}
