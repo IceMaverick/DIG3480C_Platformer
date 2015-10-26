@@ -7,6 +7,7 @@
 
 .actor  { position: absolute;  }
 .coin   { background: url(../images/coin.gif); }
+.victory { background: rgb(150, 150, 255); }
 .player { background: rgb(80, 80, 240); }
 .fireball { background: url("../images/lava.png"); }
 
